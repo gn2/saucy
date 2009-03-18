@@ -78,7 +78,7 @@ module Saucy
         height = (font[:size] * 2 + stroke[:width] * 2) * lines.length
       
         rvg = Magick::RVG.new(width, height) do |canvas|
-          canvas.background_fill = background if background != 'transparent'
+          canvas.background_fill = background if background != 'transparent' and not FileTest.exists?("#{RAILS_ROOT}/#{background}")
         
           sw = stroke[:width]
         
@@ -122,7 +122,15 @@ module Saucy
           image = shadow!(image, shadow)
         end
 
-        image.trim        
+        image = image.trim
+        
+        # Add background image
+        if background != 'transparent' and FileTest.exists?("#{RAILS_ROOT}/#{background}")
+          background = Magick::Image.read("#{RAILS_ROOT}/#{background}").first
+          background.crop!(0,0,image.columns,image.rows)
+          image = background.composite(image, Magick::CenterGravity, Magick::OverCompositeOp)
+        end
+        image
       end
       
       def shadow! input, shadow
