@@ -222,6 +222,14 @@ Try out
         }   
       }
       
+      @with_background = { 
+        :background => "public/images/background.jpg", 
+        :font => { 
+          :size => 50, 
+          :color => "#fff" 
+          }  
+        }
+      
   end
   
 * In saucy.html.erb
@@ -267,7 +275,9 @@ Try out
                       :style=> @outline, 
                       :highlight => {:stroke => {:color => "blue" }} 
                     ) %>
-
+      <%= saucy_tag(  "this text has a background image",
+                      :style=> @with_background 
+                    ) %>
       </div>
     </body>
   </html>
