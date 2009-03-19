@@ -59,7 +59,7 @@ module Saucy
         concat(content_tag(options[:tag], capture(&block), options[:html] || {}))
       else        
         if options[:highlight]
-          inner_tag = "<a href='#' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
+          inner_tag = "<a href='#{options[:html][:href]}' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
           options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
           content_tag(options[:tag], inner_tag, options[:html] || {})
         else
