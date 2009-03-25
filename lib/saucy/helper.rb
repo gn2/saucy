@@ -41,19 +41,15 @@ module Saucy
         ie_style += "_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{src}', sizingMethod='crop');"
       end
       
-      options[:html][:class] << 'saucy'
       if options[:highlight]
         style['margin-top'] = "#{real_height - height}px"
-
       end
       
       options[:tag] ||= :p
        
       options[:html][:style] = style.collect {|key, value| [key, value].join(': ') }.join('; ') + "; " + ie_style
       
-      options[:html][:class] = options[:html][:class].join(' ')
-      options[:html].delete(:class) if options[:html][:class].blank?
-
+      options[:html][:class] = ["saucy"].concat(options[:html][:class].split(" ")).join(" ")
       
       if block_given?
         concat(content_tag(options[:tag], capture(&block), options[:html] || {}))
