@@ -9,7 +9,17 @@ module Saucy
       filename  = Digest::MD5.hexdigest(name + options.to_s) + '_' + name.gsub(/[^a-z0-9]+/i, '_') + '.png'
       
       unless File.exists?(File.join(ABS_OUTPUT_DIR, filename))
-        Saucy::Render::RVG.render(name, filename, options)
+        if !options[:render].nil?
+          case options[:render].to_s.downcase
+          when 'draw'
+            Saucy::Render::Draw.render(name, filename, options)
+          else
+            Saucy::Render::RVG.render(name, filename, options)
+          end
+        else
+          # RVG is used by default (for backward compatibility)
+          Saucy::Render::RVG.render(name, filename, options)
+        end
       end
       
       size = Saucy::Image.cached_size(filename)
