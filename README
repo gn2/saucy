@@ -12,11 +12,11 @@ Examples
 
   <%= saucy_tag("Hi there") %>
   <%= saucy_tag("I am red", :style => {:font => {:color => 'red' }}) %>
-  <%= saucy_tag("I am a red/blue sprite", 
-                  :style => {:font => {:color => 'red'}}, 
+  <%= saucy_tag("I am a red/blue sprite",
+                  :style => {:font => {:color => 'red'}},
                   :highlight => {:font => {:color => 'blue'}}
                 ) %>
-  
+
 Use
 ---
 
@@ -39,50 +39,58 @@ Available options
 {:highlight => {}}
 
 # The html style needs to be a hash
-# The html class needs to be a array of classNames
+# The html class needs to be a array of class names, or a string of space-separated class names.
 {:html => {:style => {}, :class => []}}
 
 # Tag needs to be symbol (default is :a)
 {:tag => :p}
 
-# Transparent needs to be a boolean - 
-# this defaults to true 
+# Transparent needs to be a boolean -
+# this defaults to true
 {:transparent => false}
+
+# Render allows you to select which render engine you want to use (among: rvg, draw)
+# This defaults to rvg.
+{:render => 'draw'}
+
+# Line_width needs to be a positive integer.
+# This has the same behaviour as word_wrap in ActionView::Helpers::TextHelper.
+{:line_width => 25}
 
 Styles
 ------
 
-The style has has several options and the default style is: 
+The style has has several options and the default style is:
 
-  { 
+  {
     :background => "transparent",
     :font       => {
-      :size     => 18, 
-      :color    => "#000", 
-      :font     => "arial", 
+      :size     => 18,
+      :color    => "#000",
+      :font     => "arial",
       :stretch  => "normal"
     },
     :stroke => {
-      :width    => 0, 
-      :color    => "#000", 
-      :inner    => true 
+      :width    => 0,
+      :color    => "#000",
+      :inner    => true
     },
     :spacing    => {
-      :letter   => 0, 
+      :letter   => 0,
       :word     => 0
     },
     :rotate => 0,
     :shadow => {
-      :color => "#000", 
-      :opacity => 0.6, 
-      :top => 2, 
-      :left => 2, 
-      :blur => 5.0, 
-      :render => false 
+      :color => "#000",
+      :opacity => 0.6,
+      :top => 2,
+      :left => 2,
+      :blur => 5.0,
+      :render => false
     }
   }
 
-The style that's passed in will be merged over the top of this. 
+The style that's passed in will be merged over the top of this.
 
 Internet Explorer
 -----
@@ -115,137 +123,137 @@ Try out
 * In your controller
 
   def saucy
-    @spacing = { 
-      :font => { 
-        :size => 70, 
-        :color => "#cfc" 
+    @spacing = {
+      :font => {
+        :size => 70,
+        :color => "#cfc"
       },
       :spacing => {
-        :letter => -6 
-      }  
+        :letter => -6
+      }
     }
 
-    @thick_stroked = { 
-      :stroke => { 
+    @thick_stroked = {
+      :stroke => {
         :color => "red",
-        :width => 5 
-        }, 
-      :font => { 
-        :size => 50, 
-        :color => "#fff" 
-        }  
+        :width => 5
+        },
+      :font => {
+        :size => 50,
+        :color => "#fff"
+        }
       }
 
-    @bauhaus = { 
-      :font => { 
-        :size => 50, 
-        :font => "bauhausl.ttf", 
-        :color => "white"  
-        }  
+    @bauhaus = {
+      :font => {
+        :size => 50,
+        :font => "bauhausl.ttf",
+        :color => "white"
+        }
       }
-    
-    @outline = { 
-      :font => { 
-        :size => 60, 
-        :font => "basket.ttf", 
-        :color => "transparent" 
+
+    @outline = {
+      :font => {
+        :size => 60,
+        :font => "basket.ttf",
+        :color => "transparent"
         },
       :stroke => {
         :width => 2
       },
-      :shadow => { 
-        :render => true, 
-        :top => 5, 
-        :left => 5, 
-        :opacity => 0.2 
-        }  
-      }
-      
-
-    @shadow = { 
-      :font => { 
-        :size => 60, 
-        :font => "basket.ttf", 
-        :color => "#fff" 
-        }, 
-      :shadow => { 
-        :render => true, 
-        :top => 5, 
-        :left => 5, 
-        :opacity => 0.2 
-        }  
-      }
-    @rotate = { 
-      :rotate => -15, 
-      :font => { 
-        :size => 70, 
-        :font => "bauhausl.ttf", 
-        :color => "#fec", 
-        :stretch => "condensed" 
+      :shadow => {
+        :render => true,
+        :top => 5,
+        :left => 5,
+        :opacity => 0.2
         }
       }
 
-    @saucy = { 
-      :font => { 
-        :size => 80, 
-        :font => "basket.ttf", 
-        :color => "#f6c" 
-        },  
-      :stroke => { 
-        :color => "white", 
-        :width => 15, 
-        :inner => 1 
-        }, 
-      :shadow => { 
-        :render => true, 
-        :top => 5, 
-        :left => 5, 
-        :opacity => 0.2 
+
+    @shadow = {
+      :font => {
+        :size => 60,
+        :font => "basket.ttf",
+        :color => "#fff"
+        },
+      :shadow => {
+        :render => true,
+        :top => 5,
+        :left => 5,
+        :opacity => 0.2
         }
       }
-    
-    @thick_stroked = { 
-      :stroke => { 
-        :color => "red", 
-        :width => 20, 
-        :inner => 1 
-      }, 
-      :font => { 
-        :size => 50, 
-        :color => "#fff" 
-        }, 
-      :rotate => 10, 
-      :shadow => { 
-        :render => true, 
-        :top => 5, 
-        :left => 5 
-        }   
-      }
-      
-      @with_background = { 
-        :background => "public/images/background.jpg", 
-        :font => { 
-          :size => 50, 
-          :color => "#fff" 
-          }  
+    @rotate = {
+      :rotate => -15,
+      :font => {
+        :size => 70,
+        :font => "bauhausl.ttf",
+        :color => "#fec",
+        :stretch => "condensed"
         }
-      
+      }
+
+    @saucy = {
+      :font => {
+        :size => 80,
+        :font => "basket.ttf",
+        :color => "#f6c"
+        },
+      :stroke => {
+        :color => "white",
+        :width => 15,
+        :inner => 1
+        },
+      :shadow => {
+        :render => true,
+        :top => 5,
+        :left => 5,
+        :opacity => 0.2
+        }
+      }
+
+    @thick_stroked = {
+      :stroke => {
+        :color => "red",
+        :width => 20,
+        :inner => 1
+      },
+      :font => {
+        :size => 50,
+        :color => "#fff"
+        },
+      :rotate => 10,
+      :shadow => {
+        :render => true,
+        :top => 5,
+        :left => 5
+        }
+      }
+
+      @with_background = {
+        :background => "public/images/background.jpg",
+        :font => {
+          :size => 50,
+          :color => "#fff"
+          }
+        }
+
   end
-  
+
 * In saucy.html.erb
-  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
   <html>
     <head>
       <title>Saucy</title>
-   
+
       <style type="text/css">
        body {background: url(http://www.mr-tut.com/images/uploads/803.gif); }
        p {margin-right: 3em; margin-top: 3em; float: left}
        #container {width: 1000px}
        .saucySprite:hover { margin-top: 0px !important; }
       </style>
-    
+
     </head>
     <body>
       <%= saucy_tag "Saucy - Examples", :style=> @saucy, :tag=> "h2" %>
@@ -259,24 +267,24 @@ Try out
       <%= saucy_tag "30 degrees", :style => @rotate %>
       <%= saucy_tag  "shadow", :style => @shadow %>
 
-      <%= saucy_tag("I am a red/blue sprite", 
-                      :style => {:font => {:color => 'red'}}, 
+      <%= saucy_tag("I am a red/blue sprite",
+                      :style => {:font => {:color => 'red'}},
                       :highlight => {:font => {:color => 'blue'}}
                     ) %>
 
 
-      <%= saucy_tag("hover effects sprite!!", 
-                    :style => @thick_stroked, 
+      <%= saucy_tag("hover effects sprite!!",
+                    :style => @thick_stroked,
                     :highlight => {:stroke => {:color => "#5fe"}},
                     :html => {:class => ["myclass2"]}
                   ) %>
 
       <%= saucy_tag(  "outline...",
-                      :style=> @outline, 
-                      :highlight => {:stroke => {:color => "blue" }} 
+                      :style=> @outline,
+                      :highlight => {:stroke => {:color => "blue" }}
                     ) %>
       <%= saucy_tag(  "this text has a background image",
-                      :style=> @with_background 
+                      :style=> @with_background
                     ) %>
       </div>
     </body>
