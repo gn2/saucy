@@ -30,7 +30,7 @@ module Saucy
       size = Saucy::Image.cached_size(filename)
       # We divide by the number of images to get the height
       # of the first one (for sprites)
-      real_height = size[1] / (options[:highlight] ? 2 : 1)
+      real_height = size[1] / ((options[:highlight] && !options[:highlight].empty?) ? 2 : 1)
       height = size[1]
 
       src  = File.join(OUTPUT_DIR, filename)
@@ -56,7 +56,7 @@ module Saucy
         ie_style += "_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{src}', sizingMethod='crop');"
       end
 
-      if options[:highlight]
+      if options[:highlight] && !options[:highlight].empty?
         style['margin-top'] = "#{real_height - height}px"
       end
 
@@ -69,7 +69,7 @@ module Saucy
       if block_given?
         concat(content_tag(options[:tag], capture(&block), options[:html] || {}))
       else
-        if options[:highlight]
+        if options[:highlight] && !options[:highlight].empty?
           inner_tag = "<a href='#{options[:html][:href]}' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
           options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
           content_tag(options[:tag], inner_tag, options[:html] || {})
