@@ -70,9 +70,15 @@ module Saucy
         concat(content_tag(options[:tag], capture(&block), options[:html] || {}))
       else
         if options[:highlight] && !options[:highlight].empty?
-          inner_tag = "<a href='#{options[:html][:href]}' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
-          options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
-          content_tag(options[:tag], inner_tag, options[:html] || {})
+          if options[:facebox]
+            inner_tag = link_to_function(name, "jQuery.facebox(function(){ #{remote_function(:url => options[:html][:href])} })", :href => options[:html][:href], :style => "#{options[:html][:style]};height: #{height}px;", :class => "saucySprite")
+            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
+            content_tag(options[:tag], inner_tag, options[:html] || {})
+          else
+            inner_tag = "<a href='#{options[:html][:href]}' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
+            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
+            content_tag(options[:tag], inner_tag, options[:html] || {})
+          end
         else
           content_tag(options[:tag], name, options[:html] || {})
         end

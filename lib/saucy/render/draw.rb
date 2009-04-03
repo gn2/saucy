@@ -74,7 +74,7 @@ module Saucy
           span_style = (has_spans?(text) && options[:span] && !options[:span].empty?) ? style.deep_merge(options[:span]) : style
 
           image = draw(text, style, span_style)
-          background_image!(image, style[:background])
+          image = background_image(image, style[:background]) if (FileTest.exists?("#{RAILS_ROOT}/#{style[:background]}"))
 
           if options[:highlight] && !options[:highlight].empty?
             images  = Magick::ImageList.new
@@ -82,7 +82,7 @@ module Saucy
             span_style = (has_spans?(text) && options[:span_highlight] && !options[:span_highlight].empty?) ? span_style.deep_merge(options[:span_highlight]) : style
 
             highlight_image = draw(text, style, span_style)
-            background_image!(highlight_image, style[:background])
+            highlight_image = background_image(highlight_image, style[:background]) if (FileTest.exists?("#{RAILS_ROOT}/#{style[:background]}"))
 
             images << highlight_image
             images << image
@@ -206,12 +206,13 @@ module Saucy
         end
 
         # Add background image
-        def background_image!(image, background_image)
+        def background_image(image, background_image)
           if FileTest.exists?("#{RAILS_ROOT}/#{background_image}")
             background_image = Magick::Image.read("#{RAILS_ROOT}/#{background_image}").first
             background_image.crop!(0,0,image.columns,image.rows)
             image = background_image.composite(image, Magick::CenterGravity, Magick::OverCompositeOp)
           end
+          image
         end
 
         # Add shadow effect
