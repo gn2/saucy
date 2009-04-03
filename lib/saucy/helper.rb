@@ -32,7 +32,8 @@ module Saucy
       # of the first one (for sprites)
       real_height = size[1] / ((options[:highlight] && !options[:highlight].empty?) ? 2 : 1)
       height = size[1]
-
+      width = size[0]
+      
       src  = File.join(OUTPUT_DIR, filename)
 
       options[:html] ||= {}
@@ -71,12 +72,12 @@ module Saucy
       else
         if options[:highlight] && !options[:highlight].empty?
           if options[:facebox]
-            inner_tag = link_to_function(name, "jQuery.facebox(function(){ #{remote_function(:url => options[:html][:href])} })", :href => options[:html][:href], :style => "#{options[:html][:style]};height: #{height}px;", :class => ["saucySprite"].concat(options[:html][:class].split(" ")).join(" "))
-            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
+            inner_tag = link_to_function(name, "jQuery.facebox(function(){ #{remote_function(:url => options[:html][:href])} })", :href => options[:html][:href], :style => "#{options[:html][:style]};height: #{height}px; width:#{width}px;", :class => ["saucySprite"].concat(options[:html][:class].split(" ")).join(" "))
+            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;; width:#{width}px;"
             content_tag(options[:tag], inner_tag, options[:html] || {})
           else
-            inner_tag = "<a href='#{options[:html][:href]}' class='#{["saucySprite"].concat(options[:html][:class].split(" ")).join(" ")}' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
-            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
+            inner_tag = "<a href='#{options[:html][:href]}' class='#{["saucySprite"].concat(options[:html][:class].split(" ")).join(" ")}' style=\"#{options[:html][:style]};height: #{height}px; width:#{width}px;\">#{name}</a>"
+            options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px; width:#{width}px;"
             content_tag(options[:tag], inner_tag, options[:html] || {})
           end
         else
