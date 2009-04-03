@@ -71,11 +71,11 @@ module Saucy
       else
         if options[:highlight] && !options[:highlight].empty?
           if options[:facebox]
-            inner_tag = link_to_function(name, "jQuery.facebox(function(){ #{remote_function(:url => options[:html][:href])} })", :href => options[:html][:href], :style => "#{options[:html][:style]};height: #{height}px;", :class => "saucySprite")
+            inner_tag = link_to_function(name, "jQuery.facebox(function(){ #{remote_function(:url => options[:html][:href])} })", :href => options[:html][:href], :style => "#{options[:html][:style]};height: #{height}px;", :class => ["saucySprite"].concat(options[:html][:class].split(" ")).join(" "))
             options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
             content_tag(options[:tag], inner_tag, options[:html] || {})
           else
-            inner_tag = "<a href='#{options[:html][:href]}' class='saucySprite' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
+            inner_tag = "<a href='#{options[:html][:href]}' class='#{["saucySprite"].concat(options[:html][:class].split(" ")).join(" ")}' style=\"#{options[:html][:style]};height: #{height}px;\">#{name}</a>"
             options[:html][:style] = "display:block; overflow:hidden; height: #{real_height}px;"
             content_tag(options[:tag], inner_tag, options[:html] || {})
           end
