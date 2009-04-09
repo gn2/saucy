@@ -8,7 +8,7 @@ module Saucy
     # saucy_tag(name1, :option2 => 'foo', :highlight => {:font => {:color => 'blue'}}, :line_width => 20)
 
     def saucy_tag(name, options = {}, &block)
-      filename  = Digest::MD5.hexdigest(name + options.to_s) + '_' + name.gsub(/[^a-z0-9]+/i, '_') + '.png'
+      filename  = Digest::MD5.hexdigest(name + options.to_s) + '_' + name.gsub(/[^a-z0-9]+/i, '_')[0..20] + '.png'
 
       unless File.exists?(File.join(ABS_OUTPUT_DIR, filename))
 
