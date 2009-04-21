@@ -44,7 +44,8 @@ module Saucy
           :size     => 18,
           :color    => "#000",
           :font     => "arial",
-          :stretch  => "normal"
+          :stretch  => "normal",
+          :align    => "left"
         },
         :stroke => {
           :width    => 0,
@@ -177,7 +178,7 @@ module Saucy
           end
 
           # Append vertically
-          image = images.append(true)
+          image = append_vertically(images, style[:font][:align])
 
           if style[:rotate] != 0
             image = rotate!(image, style[:rotate])
@@ -194,7 +195,7 @@ module Saucy
         def annotate!(draw, image, x, y, text, font, spacing, margin=[0,0,0,0], previous_margin=[0,0,0,0])
           font_file = font[:font].match(/\./) ? File.join(FONT_STORE, font[:font]) : font[:font]
           #puts "==> text = '#{text}', x = #{x}, y = #{y}, margin = #{margin.to_s}, previous_margin = #{previous_margin.to_s}"
-
+          
           draw.annotate(image, 0, 0, x + margin[3] + previous_margin[1], y + margin[0], text) {
             self.gravity = Magick::WestGravity
             self.stroke = 'transparent'
@@ -213,6 +214,30 @@ module Saucy
             image = background_image.composite(image, Magick::CenterGravity, Magick::OverCompositeOp)
           end
           image
+        end
+        
+        # 
+        def append_vertically(image_list, text_align)
+          text_align = case text_align.strip.downcase
+          when 'center': Magick::CenterGravity
+          when 'right': Magick::EastGravity
+          else 
+            Magick::WestGravity
+          end
+          
+          # Because Magick::WestGravity corresponds to the default behaviour of ImageList::append
+          if text_align != Magick::WestGravity
+            largest_width = 0
+            image_list.each { |image| largest_width = image.columns if largest_width < image.columns }
+            image_list.collect! do |image|
+              big_image= Magick::Image.new(largest_width, image.rows) {
+                self.background_color = 'transparent'
+              }
+              big_image.composite(image, text_align, Magick::OverCompositeOp)
+            end
+          end
+          
+          image_list.append(true)
         end
 
         # Add shadow effect
