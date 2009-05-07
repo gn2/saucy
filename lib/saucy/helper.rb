@@ -12,7 +12,7 @@ module Saucy
 
       unless File.exists?(File.join(ABS_OUTPUT_DIR, filename))
 
-        name = word_wrap(name, :line_width => options[:line_width].to_i) if options[:line_width] && options[:line_width].to_i > 0
+        name = word_wrap_avoiding_spans(name, options[:line_width].to_i) if options[:line_width] && options[:line_width].to_i > 0
 
         if !options[:render].nil?
           case options[:render].to_s.downcase
@@ -85,6 +85,14 @@ module Saucy
         end
       end
 
+    end
+
+    private
+    SPAN_RE = /(?i:<\/?span[^>]*>)/
+    ALL_SPANS_RE = /(?:#{SPAN_RE}*(?!#{SPAN_RE}))/
+    def word_wrap_avoiding_spans(str,width)
+      full_re = /((?:#{ALL_SPANS_RE}.){1,#{width-1}}#{ALL_SPANS_RE}\S(?:#{SPAN_RE}+|\b))\s*/
+      str.gsub(/\s*\n/, ' ').gsub(full_re, "\\1\n")
     end
 
   end
