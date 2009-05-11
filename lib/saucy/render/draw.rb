@@ -29,6 +29,14 @@ module Saucy
       def starts_with_span?(string)
         (string_starts_with_opening_span?(string) or !first_span_is_opened?(string)) ? true : false
       end
+      
+      def starts_with_whitespace?(string)
+        string =~ /^\s/
+      end
+
+      def ends_with_whitespace?(string)
+        string =~ /\s$/
+      end
 
     end # module helper
 
@@ -70,7 +78,6 @@ module Saucy
 
       class << self
         def render(text, filename, options = {})
-
           style = DEFAULT_STYLE.deep_merge(options[:style] || {})
           span_style = (has_spans?(text) && options[:span] && !options[:span].empty?) ? style.deep_merge(options[:span]) : style
 
@@ -124,6 +131,8 @@ module Saucy
 
           # Each line will be made of one image. All lines will then be merged.
           lines.each do |line|
+            x_margin, y_margin = 0, 0
+
             # Creating image object
             image = Magick::Image.new(width*2, height*2) {
               self.background_color = background_color
@@ -136,7 +145,7 @@ module Saucy
             # If this line has not spans, then we just writte it normally
             if !has_spans?(line)
               # Lines without spans will always use the previous style. Default is the normal style
-              # (set above). Therefore, if a span fills multiple lines, its style will used correctly.
+              # (set above). Therefore, if a span fills multiple lines, its style will be used correctly.
               annotate!(t, image, 0, y, line, previous_style[:font], previous_style[:spacing])
               line_height = previous_style[:font][:height] || previous_style[:font][:size]
             else
@@ -151,11 +160,19 @@ module Saucy
               # Sub pieces of text will be drawn separatly
               text_elements.each do |text_element|
                 next if text_element.blank?
-
-                # We need to adjust the x coordinate of the current piece of text
+                
+                # Computing margins
+                x_margin = current_style[:margin][3] + previous_style[:margin][1]
+                y_margin = current_style[:margin][0]
+                
+                # Quick fix for whitespace (should be improved)
+                x += current_style[:font][:size].to_i/2 if starts_with_whitespace?(text_element)
+                
+                # We need to adjust the coordinates of the current piece of text
                 x = image.trim.columns
+                
                 # Annotate the picture
-                annotate!(t, image, x, y, text_element, current_style[:font], current_style[:spacing], current_style[:margin], previous_style[:margin])
+                annotate!(t, image, x + x_margin, y + y_margin, text_element, current_style[:font], current_style[:spacing])
                 line_height = current_style[:font][:height] || larger_font
 
                 # Save previous style for next iteration
@@ -192,11 +209,11 @@ module Saucy
         end
 
         # Write text on image object
-        def annotate!(draw, image, x, y, text, font, spacing, margin=[0,0,0,0], previous_margin=[0,0,0,0])
+        def annotate!(draw, image, x, y, text, font, spacing)
           font_file = font[:font].match(/\./) ? File.join(FONT_STORE, font[:font]) : font[:font]
-          #puts "==> text = '#{text}', x = #{x}, y = #{y}, margin = #{margin.to_s}, previous_margin = #{previous_margin.to_s}"
-          
-          draw.annotate(image, 0, 0, x + margin[3] + previous_margin[1], y + margin[0], text) {
+          # puts "==> text = '#{text}', x = #{x}, y = #{y}"
+
+          draw.annotate(image, 0, 0, x, y, text) {
             self.gravity = Magick::WestGravity
             self.stroke = 'transparent'
             self.fill = font[:color]
