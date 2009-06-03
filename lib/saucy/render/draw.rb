@@ -44,7 +44,10 @@ module Saucy
     class Draw
       extend Helper
 
-      FONT_STORE = File.join(File.dirname(__FILE__), *%w[ .. .. .. fonts ])
+      FONT_STORES = [
+        File.join(File.dirname(__FILE__), *%w[ .. .. .. fonts ]), 
+        File.join(Rails.root, *%w[ lib fonts ])
+      ]
 
       DEFAULT_STYLE = {
         :background => "transparent",
@@ -210,7 +213,14 @@ module Saucy
 
         # Write text on image object
         def annotate!(draw, image, x, y, text, font, spacing)
-          font_file = font[:font].match(/\./) ? File.join(FONT_STORE, font[:font]) : font[:font]
+          font_file = font[:font]
+          FONT_STORES.each do |store|
+            path = File.join(store, font[:font])
+            if File.exist?(path)
+              font_file = path
+              break
+            end
+          end
           # puts "==> text = '#{text}', x = #{x}, y = #{y}"
 
           draw.annotate(image, 0, 0, x, y, text) {
