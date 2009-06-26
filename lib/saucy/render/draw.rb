@@ -29,7 +29,7 @@ module Saucy
       def starts_with_span?(string)
         (string_starts_with_opening_span?(string) or !first_span_is_opened?(string)) ? true : false
       end
-      
+
       def starts_with_whitespace?(string)
         string =~ /^\s/
       end
@@ -45,7 +45,7 @@ module Saucy
       extend Helper
 
       FONT_STORES = [
-        File.join(File.dirname(__FILE__), *%w[ .. .. .. fonts ]), 
+        File.join(File.dirname(__FILE__), *%w[ .. .. .. fonts ]),
         File.join(Rails.root, *%w[ lib fonts ])
       ]
 
@@ -100,6 +100,36 @@ module Saucy
 
             # Append vertically
             image = images.append(true)
+          end
+
+          # Specify image height
+          if options[:alignment]
+            # Create a string sample with b and p letters. This is the maximum size an image with this font can have
+            string_sample_updown = draw("bp", style, span_style)
+            # Apply this size to all generated images
+            image_height = string_sample_updown.rows
+
+            #Create two image samples, one with only a 'a', another with a 'b'
+            string_sample_flat = draw("a", style, span_style)
+            string_sample_up = draw("b", style, span_style)
+
+            # Browse the text to detect up letters. If there is no up letter the margin will be equal to the difference of height betweem b and a image
+            up_letters = ['b', 'd', 'f', 'h', 'i', 'k', 'l', 't']
+            has_up_letter = false
+            text.each_char do |c|
+              if up_letters.member?(c)
+                has_up_letter = true
+                break
+              end
+            end
+            if !has_up_letter
+              up_margin = string_sample_up.rows - string_sample_flat.rows
+            else
+              up_margin = 0
+            end
+            background_color = (FileTest.exists?("#{RAILS_ROOT}/#{style[:background]}")) ? 'transparent' : style[:background]
+            new_image = Magick::Image.new(image.columns, image_height) { self.background_color = background_color }
+            image = new_image.composite(image, 0,up_margin, Magick::OverCompositeOp)
           end
 
           # Make saucy dir
@@ -163,17 +193,17 @@ module Saucy
               # Sub pieces of text will be drawn separatly
               text_elements.each do |text_element|
                 next if text_element.blank?
-                
+
                 # Computing margins
                 x_margin = current_style[:margin][3] + previous_style[:margin][1]
                 y_margin = current_style[:margin][0]
-                
+
                 # Quick fix for whitespace (should be improved)
                 x += current_style[:font][:size].to_i/2 if starts_with_whitespace?(text_element)
-                
+
                 # We need to adjust the coordinates of the current piece of text
                 x = image.trim.columns
-                
+
                 # Annotate the picture
                 annotate!(t, image, x + x_margin, y + y_margin, text_element, current_style[:font], current_style[:spacing])
                 line_height = current_style[:font][:height] || larger_font
@@ -242,16 +272,16 @@ module Saucy
           end
           image
         end
-        
-        # 
+
+        #
         def append_vertically(image_list, text_align)
           text_align = case text_align.strip.downcase
           when 'center': Magick::CenterGravity
           when 'right': Magick::EastGravity
-          else 
+          else
             Magick::WestGravity
           end
-          
+
           # Because Magick::WestGravity corresponds to the default behaviour of ImageList::append
           if text_align != Magick::WestGravity
             largest_width = 0
@@ -263,7 +293,7 @@ module Saucy
               big_image.composite(image, text_align, Magick::OverCompositeOp)
             end
           end
-          
+
           image_list.append(true)
         end
 
